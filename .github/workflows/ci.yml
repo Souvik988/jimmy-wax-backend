@@ -1,0 +1,41 @@
+name: ci
+on: [push, pull_request]
+permissions: { contents: read }
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env: { POSTGRES_PASSWORD: postgres, POSTGRES_DB: jimmywax }
+        ports: ['54422:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 3s --health-timeout 3s --health-retries 20
+    defaults: { run: { working-directory: backend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 11 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm, cache-dependency-path: backend/pnpm-lock.yaml }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run lint:format
+      - run: pnpm run typecheck
+      - run: pnpm run contract:check
+      - name: published contract pack is up to date (validators, OpenAPI and docs agree)
+        run: pnpm run contract:pack && git diff --exit-code -- ../contracts/pack
+      - name: migrations apply from zero through the ledger and leave nothing pending
+        env: { PGPASSWORD: postgres, MIGRATE_DATABASE_URL: "postgres://postgres:postgres@127.0.0.1:54422/ci_migrate" }
+        run: |
+          psql -h 127.0.0.1 -p 54422 -U postgres -c "create database ci_migrate"
+          pnpm run db:migrate
+          pnpm run db:migrate -- --status
+      - run: pnpm exec vitest run --no-file-parallelism   # resets jimmywax_test from the migration ledger + cutover
+      - run: pnpm audit --audit-level=high
+  secrets-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: gitleaks/gitleaks-action@v2
+        env: { GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}' }

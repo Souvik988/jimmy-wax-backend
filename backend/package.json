@@ -1,0 +1,50 @@
+{
+  "name": "jimmywax-backend",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.20.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "typecheck": "node scripts/typecheck.mjs",
+    "test": "vitest run --no-file-parallelism",
+    "test:unit": "vitest run --project unit",
+    "test:integration": "vitest run --project integration --no-file-parallelism",
+    "db:reset": "tsx scripts/db-reset.ts",
+    "dev:api": "pnpm --filter @jw/commerce-api dev",
+    "dev:workers": "pnpm --filter @jw/workers dev",
+    "contract:check": "tsx scripts/contract-check.ts",
+    "format": "prettier --write .",
+    "lint:format": "prettier --check \"packages/**/*.ts\" \"apps/**/*.{ts,tsx}\" \"scripts/*.ts\"",
+    "contract:pack": "tsx scripts/export-contract-pack.ts",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "preflight": "tsx scripts/preflight.ts",
+    "shipping:readiness": "tsx scripts/shipping-readiness.ts"
+  },
+  "devDependencies": {
+    "@apidevtools/swagger-parser": "^13.1.0",
+    "@jw/commerce-domain": "workspace:*",
+    "@jw/config": "workspace:*",
+    "@jw/contracts": "workspace:*",
+    "@jw/database": "workspace:*",
+    "@jw/integrations": "workspace:*",
+    "@jw/observability": "workspace:*",
+    "@jw/test-support": "workspace:*",
+    "@types/express": "^5.0.6",
+    "@types/express-serve-static-core": "^5.1.3",
+    "@types/node": "^22.10.0",
+    "@types/nodemailer": "^8.0.2",
+    "@types/pg": "^8.11.10",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "express-list-endpoints": "^7.1.1",
+    "pg": "^8.23.1",
+    "prettier": "^3.4.2",
+    "sharp": "^0.35.5",
+    "tsx": "^4.23.0",
+    "typescript": "~5.9.0",
+    "vitest": "5.0.5",
+    "yaml": "^2.9.1"
+  }
+}

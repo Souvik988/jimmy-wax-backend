@@ -1,0 +1,445 @@
+{
+  "etag": "\"993cb25b9697227ad87c10fff6dd0e1c\"",
+  "bundle": {
+    "schemaVersion": 1,
+    "channel": "web",
+    "enabled": true,
+    "release": {
+      "id": "r0000000-0000-4000-8000-000000000001",
+      "number": 7,
+      "label": "Golden",
+      "publishedAt": "2026-10-09T09:00:00.000Z"
+    },
+    "tokens": {
+      "schemaVersion": 1,
+      "color": {
+        "roles": {
+          "bg.deep": "#0B0806",
+          "bg.base": "#120C08",
+          "bg.raised": "#18120E",
+          "bg.elevated": "#211811",
+          "bg.overlay": "#000000CC",
+          "text.primary": "#FFF9F1",
+          "text.secondary": "#B9ADA0",
+          "text.muted": "#81776D",
+          "text.onAccent": "#0B0806",
+          "border.subtle": "#F4E9D52E",
+          "border.strong": "#F4E9D547",
+          "accent.primary": "#F5C968",
+          "accent.hover": "#F5C968",
+          "accent.pressed": "#C99534",
+          "accent.soft": "#F6D98B",
+          "focus.ring": "#F3C45B",
+          "state.success": "#62B86A",
+          "state.warning": "#E7B54A",
+          "state.error": "#E65050",
+          "state.info": "#6AA9E9"
+        },
+        "palette": {
+          "ink": "#14110E",
+          "walnut": "#2A1711",
+          "leather": "#6E301D",
+          "gold": "#C99534",
+          "kraft": "#B77A36",
+          "ivory": "#F4E9D5",
+          "navy": "#10234B",
+          "silver": "#C5C9C8",
+          "mist": "#B2AAA2"
+        },
+        "gradients": {}
+      },
+      "type": {
+        "families": {
+          "display": {
+            "family": "Playfair Display",
+            "fallback": "Georgia, serif"
+          },
+          "body": {
+            "family": "Inter",
+            "fallback": "system-ui, sans-serif"
+          }
+        },
+        "scale": {
+          "hero": {
+            "size": 72,
+            "lineHeight": 1,
+            "weight": 600,
+            "tracking": -0.045
+          },
+          "h1": {
+            "size": 56,
+            "lineHeight": 1.05,
+            "weight": 600,
+            "tracking": -0.04
+          },
+          "h2": {
+            "size": 40,
+            "lineHeight": 1.1,
+            "weight": 600,
+            "tracking": -0.03
+          },
+          "h3": {
+            "size": 28,
+            "lineHeight": 1.2,
+            "weight": 600,
+            "tracking": -0.01
+          },
+          "body": {
+            "size": 16,
+            "lineHeight": 1.6,
+            "weight": 400,
+            "tracking": 0
+          },
+          "small": {
+            "size": 13,
+            "lineHeight": 1.5,
+            "weight": 400,
+            "tracking": 0
+          },
+          "label": {
+            "size": 11,
+            "lineHeight": 1.4,
+            "weight": 700,
+            "tracking": 0.16
+          }
+        }
+      },
+      "space": {
+        "unit": 4,
+        "steps": [
+          4,
+          8,
+          12,
+          16,
+          24,
+          32,
+          56,
+          80,
+          120,
+          160
+        ]
+      },
+      "radius": {
+        "frame": 4,
+        "card": 10,
+        "control": 10,
+        "large": 20,
+        "hero": 24,
+        "pill": 999
+      },
+      "elevation": {
+        "raised": {
+          "x": 0,
+          "y": 24,
+          "blur": 60,
+          "spread": -24,
+          "color": "#000000A6"
+        },
+        "overlay": {
+          "x": 0,
+          "y": 32,
+          "blur": 80,
+          "spread": -16,
+          "color": "#000000CC"
+        }
+      },
+      "motion": {
+        "durations": {
+          "fast": 180,
+          "medium": 300,
+          "slow": 560
+        },
+        "easings": {
+          "standard": [
+            0.33,
+            1,
+            0.68,
+            1
+          ],
+          "emphasis": [
+            0.16,
+            1,
+            0.3,
+            1
+          ],
+          "curtain": [
+            0.76,
+            0,
+            0.24,
+            1
+          ]
+        },
+        "intensity": "standard"
+      },
+      "components": {
+        "button": {
+          "minHeight": 48,
+          "shape": "pill",
+          "variants": {
+            "primary": {
+              "background": "accent.primary",
+              "foreground": "text.onAccent"
+            },
+            "secondary": {
+              "background": "bg.raised",
+              "foreground": "text.primary",
+              "border": "border.strong"
+            },
+            "ghost": {
+              "background": "bg.base",
+              "foreground": "text.primary"
+            }
+          }
+        },
+        "card": {
+          "radius": "card",
+          "border": true,
+          "elevation": "raised"
+        },
+        "input": {
+          "minHeight": 48,
+          "radius": "control"
+        },
+        "chip": {
+          "radius": "pill"
+        },
+        "bottomNav": {
+          "style": "plain",
+          "activeColor": "accent.primary",
+          "background": "bg.base",
+          "backgroundOpacity": 0.94
+        },
+        "header": {
+          "background": "transparent",
+          "blurOnScroll": false
+        },
+        "imageFrame": {
+          "radius": "frame"
+        }
+      },
+      "surfaces": {
+        "backdrop": {
+          "kind": "solid",
+          "tint": "#120C08",
+          "tintOpacity": 0.5
+        },
+        "grain": {
+          "enabled": false,
+          "opacity": 0.1
+        }
+      }
+    },
+    "navigation": {
+      "schemaVersion": 1,
+      "links": [
+        {
+          "id": "nav-shop",
+          "label": "Shop",
+          "action": {
+            "type": "route",
+            "path": "/shop"
+          }
+        },
+        {
+          "id": "nav-ritual",
+          "label": "The ritual",
+          "action": {
+            "type": "route",
+            "path": "/ritual"
+          }
+        }
+      ],
+      "footerColumns": [],
+      "cart": {
+        "label": "Care list"
+      }
+    },
+    "chrome": {
+      "schemaVersion": 1,
+      "brand": {
+        "wordmark": "JIMMY & WAX",
+        "mark": "W"
+      },
+      "veil": {
+        "enabled": true,
+        "mark": "W",
+        "name": "JIMMY & WAX",
+        "subline": "The finishing touch",
+        "durationMs": 1500
+      },
+      "effects": {
+        "grain": true,
+        "cursor": false,
+        "smoothScroll": {
+          "enabled": true,
+          "speedCap": 1
+        }
+      },
+      "seoDefaults": {
+        "titleTemplate": "%s · Jimmy & Wax",
+        "description": "Leather care staged as a quiet ritual, not a chore, for the pieces you keep."
+      },
+      "footer": {
+        "tagline": "Designed around the finishing touch."
+      },
+      "slots": {}
+    },
+    "pages": {
+      "home": {
+        "schemaVersion": 1,
+        "seo": {
+          "title": "Jimmy & Wax",
+          "description": "Leather care staged as a quiet ritual, not a chore, for the pieces you keep.",
+          "noindex": false,
+          "structuredData": {
+            "organization": true,
+            "product": false,
+            "breadcrumb": false
+          }
+        },
+        "blocks": [
+          {
+            "id": "blk-grid-0001",
+            "type": "web.product_grid",
+            "visible": true,
+            "props": {
+              "title": "Golden picks",
+              "source": {
+                "kind": "collection",
+                "slug": "golden-col"
+              },
+              "columns": 3,
+              "limit": 9
+            },
+            "resolved": {
+              "productIds": [
+                "golden-a",
+                "golden-c",
+                "golden-b"
+              ],
+              "outOfStockIds": [
+                "golden-b"
+              ]
+            }
+          },
+          {
+            "id": "blk-img-0001",
+            "type": "web.image",
+            "visible": true,
+            "props": {
+              "image": {
+                "mediaId": "11111111-1111-4111-8111-111111111111",
+                "alt": "Boot"
+              },
+              "caption": "Care by JIMMY & WAX"
+            }
+          }
+        ]
+      },
+      "custom:story-extra": {
+        "schemaVersion": 1,
+        "title": "Extra story",
+        "seo": {
+          "title": "Extra story page",
+          "description": "A custom page served from the Studio, with its own search appearance settings.",
+          "noindex": false,
+          "structuredData": {
+            "organization": true,
+            "product": false,
+            "breadcrumb": false
+          }
+        },
+        "blocks": [
+          {
+            "id": "blk-rt-0001",
+            "type": "web.rich_text",
+            "visible": true,
+            "props": {
+              "markdown": "Support: care@example.test"
+            }
+          }
+        ]
+      },
+      "product:golden-a": {
+        "schemaVersion": 1,
+        "nativeSections": [
+          {
+            "key": "related",
+            "visible": false
+          }
+        ],
+        "blocks": []
+      }
+    },
+    "content": {
+      "careGuides": {},
+      "faqGroups": {},
+      "stories": {},
+      "journal": {},
+      "testimonials": {},
+      "announcements": [
+        {
+          "id": "ann-1",
+          "text": "Welcome to JIMMY & WAX",
+          "tone": "info",
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "id": "camp-c0000000-0000-4000-8000-000000000001",
+          "text": "Festival offers are live",
+          "tone": "promo"
+        }
+      ]
+    },
+    "media": {
+      "11111111-1111-4111-8111-111111111111": {
+        "id": "11111111-1111-4111-8111-111111111111",
+        "kind": "image",
+        "url": "/v1/media/aaaa/orig.webp",
+        "width": 1600,
+        "height": 1000,
+        "alt": "A leather boot being polished",
+        "decorative": false,
+        "variants": [
+          {
+            "url": "/v1/media/aaaa/w640.webp",
+            "width": 640
+          }
+        ],
+        "poster": null,
+        "bundledKey": "assets/runtime/banners/hero.jpg"
+      },
+      "22222222-2222-4222-8222-222222222222": {
+        "id": "22222222-2222-4222-8222-222222222222",
+        "kind": "image",
+        "url": "/v1/media/bbbb/orig.webp",
+        "width": 1920,
+        "height": 1080,
+        "alt": "Poster",
+        "decorative": false,
+        "variants": [],
+        "poster": null,
+        "bundledKey": null
+      }
+    },
+    "variables": {
+      "store.shippingFee": "₹40",
+      "store.freeShippingThreshold": "₹999",
+      "store.codFee": "₹25",
+      "store.deliveryEstimate": "3-6 business days",
+      "store.gstRate": "18%",
+      "store.supportEmail": "care@example.test",
+      "store.supportPhone": "+91 99999 00000",
+      "brand.name": "JIMMY & WAX"
+    },
+    "diagnostics": {
+      "heldBack": {},
+      "activeCampaigns": [
+        "c0000000-0000-4000-8000-000000000001"
+      ]
+    },
+    "minClient": {},
+    "generatedAt": "2026-10-10T10:00:00.000Z"
+  }
+}

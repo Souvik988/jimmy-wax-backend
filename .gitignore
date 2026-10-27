@@ -1,0 +1,21 @@
+**/node_modules/
+**/dist/
+**/.next/
+**/.vite/
+**/coverage/
+.data/
+# Environment files can contain credentials; checked-in examples are safe templates.
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.*.example
+**/*.log
+**/*.err
+**/*.tsbuildinfo
+**/*.jks
+**/*.keystore
+**/*.pem
+**/*.key
+**/*.p12
+**/*.pfx
+**/key.properties

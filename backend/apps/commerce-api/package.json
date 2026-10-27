@@ -1,0 +1,31 @@
+{
+  "name": "@jw/commerce-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "start": "tsx src/main.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "express": "5.3.0",
+    "helmet": "^8.0.0",
+    "jose": "^6.0.0",
+    "pino-http": "^11.0.0",
+    "ioredis": "^5.4.0",
+    "zod": "4.6.7",
+    "@jw/config": "workspace:*",
+    "@jw/database": "workspace:*",
+    "@jw/commerce-domain": "workspace:*",
+    "@jw/integrations": "workspace:*",
+    "@jw/observability": "workspace:*",
+    "@jw/contracts": "workspace:*"
+  },
+  "devDependencies": {
+    "@jw/test-support": "workspace:*"
+  }
+}

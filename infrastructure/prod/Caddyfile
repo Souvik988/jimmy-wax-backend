@@ -1,0 +1,47 @@
+# Replace the hostname. Caddy obtains and renews HTTPS certificates automatically.
+#
+# One public API origin for the website and the app:
+#   * GET read routes go to experience-api (cacheable, read-only database role)
+#   * everything else goes to commerce-api
+# The operator dashboard is a separate project with its own deploy/ (it calls this API server-to-server, over the private network or
+# https), so it does NOT get a public hostname here. Keep /v1/admin reachable only from the dashboard host (see the runbook).
+api.example.com {
+	encode zstd gzip
+
+	@reads {
+		method GET
+		path /v1/products* /v1/categories /v1/store-settings /v1/home /v1/serviceability/* /v1/content* /v1/collections/* /v1/media/* /v1/app/version-check /v1/experience/app /v1/experience/web
+	}
+
+	# Prometheus scrapes the services on the private network; /metrics must never be reachable from the internet.
+	@internal path /metrics /metrics/*
+	respond @internal 404
+
+	# Media uploads (video up to 100 MiB) are the only large request bodies; everything else stays small.
+	@upload {
+		method POST
+		path /v1/admin/media
+	}
+	@notupload not path /v1/admin/media
+	request_body @upload {
+		max_size 105MB
+	}
+	request_body @notupload {
+		max_size 6MB
+	}
+
+	reverse_proxy @reads experience-api:4001
+	reverse_proxy commerce-api:4000 {
+		# long uploads and slow label PDFs
+		transport http {
+			response_header_timeout 120s
+		}
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+		-Server
+	}
+}

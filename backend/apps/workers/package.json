@@ -1,0 +1,22 @@
+{
+  "name": "@jw/workers",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "start": "tsx src/main.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "ioredis": "^5.4.0",
+    "@jw/config": "workspace:*",
+    "@jw/database": "workspace:*",
+    "@jw/commerce-domain": "workspace:*",
+    "@jw/integrations": "workspace:*",
+    "@jw/observability": "workspace:*"
+  }
+}

@@ -1,0 +1,57 @@
+# Prometheus alert rules (scrape /metrics from commerce-api, experience-api, workers). Thresholds are starting points.
+groups:
+  - name: jimmywax
+    rules:
+      - alert: ApiHigh5xxRate
+        expr: sum(rate(http_request_duration_seconds_count{status=~"5.."}[5m])) / sum(rate(http_request_duration_seconds_count[5m])) > 0.01
+        for: 5m
+        labels: { severity: page }
+        annotations: { summary: "More than 1% of requests are failing (5xx)" }
+      - alert: ApiSlowP95
+        expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le)) > 0.6
+        for: 10m
+        labels: { severity: ticket }
+        annotations: { summary: "p95 latency above 600 ms" }
+      - alert: OutboxLagging
+        expr: outbox_oldest_pending_age_seconds > 120
+        for: 3m
+        labels: { severity: page }
+        annotations: { summary: "Order/notification events are not being processed (workers down or failing)" }
+      - alert: DbPoolSaturated
+        expr: db_pool_connections{state="waiting"} > 0
+        for: 5m
+        labels: { severity: ticket }
+        annotations: { summary: "Requests are queueing for database connections" }
+      - alert: ProcessDown
+        expr: up == 0
+        for: 2m
+        labels: { severity: page }
+        annotations: { summary: "A service stopped answering /metrics" }
+      # ---- security and abuse (contract 1.4.0 runbook)
+      - alert: AuthFailureSpike
+        # failed sign-ins / refreshes / OTP checks across the auth routes (a credential-stuffing or brute-force signature)
+        expr: sum(rate(http_request_duration_seconds_count{route=~"/v1/auth/.*",status=~"401|403"}[5m])) > 1
+        for: 10m
+        labels: { severity: page }
+        annotations: { summary: "More than 1 failed authentication per second for 10 minutes" }
+      - alert: AdminForbiddenOrMfaWall
+        # operators hitting permission or step-up walls repeatedly: a misconfigured role or a stolen low-privilege session probing
+        expr: sum(rate(http_request_duration_seconds_count{route=~"/v1/admin/.*",status="403"}[10m])) > 0.2
+        for: 15m
+        labels: { severity: ticket }
+        annotations: { summary: "Sustained 403 responses on /v1/admin" }
+      - alert: RateLimiting
+        expr: sum(rate(http_request_duration_seconds_count{status="429"}[5m])) > 0.5
+        for: 10m
+        labels: { severity: ticket }
+        annotations: { summary: "Clients are being rate limited (abuse, a bulk Studio edit, or limits set too low)" }
+      - alert: WebhookRejected
+        expr: sum(rate(http_request_duration_seconds_count{route="/v1/webhooks/:provider",status=~"401|404"}[15m])) > 0.05
+        for: 15m
+        labels: { severity: ticket }
+        annotations: { summary: "Payment/shipping/email webhooks are being rejected (wrong secret or provider misconfiguration)" }
+      - alert: Burst5xx
+        expr: sum(rate(http_request_duration_seconds_count{status=~"5.."}[1m])) > 5
+        for: 2m
+        labels: { severity: page }
+        annotations: { summary: "Burst of 5xx responses" }

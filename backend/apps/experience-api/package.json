@@ -1,0 +1,28 @@
+{
+  "name": "@jw/experience-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "start": "tsx src/main.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "express": "5.3.0",
+    "helmet": "^8.0.0",
+    "zod": "4.6.7",
+    "@jw/config": "workspace:*",
+    "@jw/database": "workspace:*",
+    "@jw/observability": "workspace:*",
+    "@jw/contracts": "workspace:*",
+    "@jw/integrations": "workspace:*",
+    "@jw/commerce-domain": "workspace:*"
+  },
+  "devDependencies": {
+    "@jw/test-support": "workspace:*"
+  }
+}

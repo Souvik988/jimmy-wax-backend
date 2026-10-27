@@ -1,0 +1,16 @@
+{
+  "name": "@jw/observability",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "pino": "^10.0.0",
+    "prom-client": "^15.1.3"
+  }
+}

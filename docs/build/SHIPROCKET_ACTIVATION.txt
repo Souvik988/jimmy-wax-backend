@@ -1,0 +1,39 @@
+SHIPROCKET ACTIVATION IS DEFERRED BY THE OWNER
+
+Leave SHIPPING_PROVIDER=none in commerce and worker environments until credentials
+are supplied. Manual courier entry continues to work; no live booking is needed
+to run the store or the automated tests.
+
+The prepared adapter supports API-user login with single-flight token refresh,
+or an already-issued bearer token through SHIPROCKET_API_TOKEN. A bearer token
+expires and must be replaced; an API-user email/password pair supports refresh.
+The dashboard never receives or stores either credential.
+
+Activation steps when the owner supplies credentials:
+1. Put SHIPPING_PROVIDER=shiprocket and SHIPROCKET_WEBHOOK_TOKEN in the private
+   commerce and worker environments. Supply either the dedicated API user's
+   SHIPROCKET_EMAIL and SHIPROCKET_PASSWORD or SHIPROCKET_API_TOKEN. Restart the
+   two services. Do not change the read-only experience service environment.
+2. Run pnpm shipping:readiness in backend/ with that environment loaded. This
+   only reads pickup locations and wallet balance. It creates no shipment.
+3. In dashboard Shipping settings choose the exact registered pickup location,
+   pickup PIN, parcel defaults, courier rules and preferred couriers. Ensure
+   every shippable variant has a weight and dimensions.
+4. Configure the provider tracking webhook at
+   https://<API_ORIGIN>/v1/webhooks/shiprocket with x-api-key matching
+   SHIPROCKET_WEBHOOK_TOKEN. Use a separate random secret for this webhook.
+5. Check one delivery PIN and an unavailable PIN through the shipping tools.
+6. For a controlled real order, review courier quotes, wallet balance and COD
+   value, then explicitly book from the dashboard. Verify AWB, label and pickup.
+   If a request times out, reconcile by the same merchant reference before
+   creating anything else; never blindly replay a create request.
+7. Verify webhook deduplication and the same tracking status on dashboard, web
+   and app. Verify cancellation before pickup and a provider outage.
+8. The reverse adapter uses the documented return endpoint, buyer pickup
+   address, merchant drop address, selected immutable order lines and package
+   dimensions. It is not auto-booked by approving a return: reverse booking
+   must pass its own merchant review and live acceptance when the account is
+   available. Manual return coordination remains the operational fallback.
+
+No real-provider acceptance has been claimed without credentials. Official API:
+https://apidocs.shiprocket.in/?version=latest

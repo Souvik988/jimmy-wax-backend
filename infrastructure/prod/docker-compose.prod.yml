@@ -1,0 +1,49 @@
+# Single-host production topology (reasonable for launch scale; see docs/build/CAPACITY_REPORT.md).
+# NOT RUN in the authoring environment. PostgreSQL is deliberately EXTERNAL (managed Postgres with PITR recommended).
+# Images come from infrastructure/docker/Dockerfile (targets: commerce-api, experience-api, workers, admin).
+name: jimmywax
+x-common: &common
+  restart: unless-stopped
+  logging: { driver: json-file, options: { max-size: "20m", max-file: "5" } }
+  stop_grace_period: 30s
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    volumes: ["./Caddyfile:/etc/caddy/Caddyfile:ro", "caddy_data:/data"]
+    depends_on: [commerce-api, experience-api]
+  commerce-api:
+    <<: *common
+    env_file: [.env.prod, .env.commerce.prod]
+    build: { context: ../.., dockerfile: infrastructure/docker/Dockerfile, target: commerce-api }
+    environment: { PORT: "4000", NODE_ENV: production, SERVICE_ROLE: commerce, TRUST_PROXY_HOPS: "1" }
+    volumes: ["storage:/data/storage"]
+    healthcheck: { test: ["CMD", "wget", "-qO-", "http://127.0.0.1:4000/readyz"], interval: 15s, timeout: 3s, retries: 4 }
+    deploy: { replicas: 2 }
+  experience-api:
+    <<: *common
+    env_file: [.env.prod, .env.experience.prod]
+    build: { context: ../.., dockerfile: infrastructure/docker/Dockerfile, target: experience-api }
+    environment: { PORT: "4001", NODE_ENV: production, SERVICE_ROLE: experience }
+    volumes: ["storage:/data/storage:ro"]
+    healthcheck: { test: ["CMD", "wget", "-qO-", "http://127.0.0.1:4001/readyz"], interval: 15s, timeout: 3s, retries: 4 }
+    deploy: { replicas: 2 }
+  workers:
+    <<: *common
+    env_file: [.env.prod, .env.worker.prod]
+    build: { context: ../.., dockerfile: infrastructure/docker/Dockerfile, target: workers }
+    environment: { NODE_ENV: production, SERVICE_ROLE: worker }
+    deploy: { replicas: 1 }   # loops are DB-leased (SKIP LOCKED); more replicas are safe
+  # The legacy in-repo admin console (apps/admin) is retired: operators use the separate dashboard project (its own deploy/ folder).
+  # Re-enable this service only if you still run apps/admin.
+  # admin:
+  #   <<: *common
+  #   build: { context: ../.., dockerfile: infrastructure/docker/Dockerfile, target: admin }
+  #   environment: { NODE_ENV: production, PORT: "3100", COMMERCE_API_URL: "http://commerce-api:4000" }
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    # Used for ONE thing: shared rate-limit counters (REDIS_CACHE_URL=redis://redis:6379). Disposable; the API fails open if it is down.
+    command: ["redis-server", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru"]
+volumes: { caddy_data: {}, storage: {} }
