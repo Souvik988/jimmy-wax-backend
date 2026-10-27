@@ -1,0 +1,84 @@
+# Local development only. All published ports bind to localhost.
+name: jimmywax-dev
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: jimmywax
+    ports: ['127.0.0.1:54422:5432']
+    volumes: ['pgdata:/var/lib/postgresql/data']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d jimmywax']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  redis:
+    image: redis:7-alpine
+    command: ['redis-server', '--maxmemory', '128mb', '--maxmemory-policy', 'allkeys-lru']
+  migrate:
+    build: { context: ../.., dockerfile: infrastructure/docker/Dockerfile, target: commerce-api }
+    environment:
+      MIGRATE_DATABASE_URL: postgres://postgres:postgres@postgres:5432/jimmywax
+    command: ['pnpm', 'db:migrate', '--yes']
+    depends_on:
+      postgres: { condition: service_healthy }
+  roles:
+    image: postgres:17-alpine
+    environment: { PGHOST: postgres, PGUSER: postgres, PGPASSWORD: postgres, PGDATABASE: jimmywax }
+    volumes: ['./dev-roles.sql:/dev-roles.sql:ro']
+    command: ['psql', '-v', 'ON_ERROR_STOP=1', '-f', '/dev-roles.sql']
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+  storage-init:
+    image: busybox:1.36
+    user: root
+    volumes: ['storage:/data/storage']
+    command: ['sh', '-c', 'chown 1000:1000 /data/storage']
+  commerce-api:
+    build: { context: ../.., dockerfile: infrastructure/docker/Dockerfile, target: commerce-api }
+    environment:
+      NODE_ENV: development
+      SERVICE_ROLE: commerce
+      PORT: '4000'
+      DATABASE_URL: postgres://jw_api_login:jw_api_dev@postgres:5432/jimmywax
+      REDIS_CACHE_URL: redis://redis:6379
+      STORAGE_DIR: /data/storage
+      TRUST_PROXY_HOPS: '1'
+      PAYMENT_PROVIDER: none
+      SHIPPING_PROVIDER: none
+    volumes: ['storage:/data/storage']
+    depends_on:
+      roles: { condition: service_completed_successfully }
+      storage-init: { condition: service_completed_successfully }
+  experience-api:
+    build: { context: ../.., dockerfile: infrastructure/docker/Dockerfile, target: experience-api }
+    environment:
+      NODE_ENV: development
+      SERVICE_ROLE: experience
+      PORT: '4001'
+      DATABASE_URL: postgres://jw_experience_login:jw_experience_dev@postgres:5432/jimmywax
+      STORAGE_DIR: /data/storage
+    volumes: ['storage:/data/storage:ro']
+    depends_on:
+      roles: { condition: service_completed_successfully }
+      storage-init: { condition: service_completed_successfully }
+  workers:
+    build: { context: ../.., dockerfile: infrastructure/docker/Dockerfile, target: workers }
+    environment:
+      NODE_ENV: development
+      SERVICE_ROLE: worker
+      DATABASE_URL: postgres://jw_worker_login:jw_worker_dev@postgres:5432/jimmywax
+      STORAGE_DIR: /data/storage
+      PAYMENT_PROVIDER: none
+      SHIPPING_PROVIDER: none
+    volumes: ['storage:/data/storage']
+    depends_on:
+      roles: { condition: service_completed_successfully }
+      storage-init: { condition: service_completed_successfully }
+  gateway:
+    image: caddy:2-alpine
+    ports: ['127.0.0.1:8088:8088']
+    volumes: ['./Caddyfile.dev:/etc/caddy/Caddyfile:ro']
+    depends_on: [commerce-api, experience-api]
+volumes: { pgdata: {}, storage: {} }

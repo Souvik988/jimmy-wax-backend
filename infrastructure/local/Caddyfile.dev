@@ -1,0 +1,8 @@
+:8088 {
+  @reads {
+    method GET
+    path /v1/products* /v1/categories /v1/store-settings /v1/home /v1/serviceability/* /v1/content* /v1/collections/* /v1/media/* /v1/app/version-check /v1/experience/app /v1/experience/web
+  }
+  reverse_proxy @reads experience-api:4001
+  reverse_proxy commerce-api:4000
+}
