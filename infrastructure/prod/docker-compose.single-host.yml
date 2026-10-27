@@ -1,0 +1,40 @@
+# Optional overlay for a single server with self-hosted PostgreSQL and disk media.
+# Run migrations and create the least-privilege login roles before starting the APIs.
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    env_file: [.env.postgres.prod]
+    volumes: ["postgres_data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    stop_grace_period: 60s
+  storage-init:
+    image: busybox:1.36
+    user: root
+    volumes: ["storage:/data/storage"]
+    command: ["sh", "-c", "chown 1000:1000 /data/storage"]
+    restart: "no"
+  commerce-api:
+    environment: { STORAGE_DRIVER: disk, STORAGE_ALLOW_LOCAL_DISK: "true" }
+    depends_on:
+      postgres: { condition: service_healthy }
+      storage-init: { condition: service_completed_successfully }
+    deploy: { replicas: 1 }
+  experience-api:
+    environment: { STORAGE_DRIVER: disk, STORAGE_ALLOW_LOCAL_DISK: "true" }
+    depends_on:
+      postgres: { condition: service_healthy }
+      storage-init: { condition: service_completed_successfully }
+    deploy: { replicas: 1 }
+  workers:
+    environment: { STORAGE_DRIVER: disk, STORAGE_ALLOW_LOCAL_DISK: "true" }
+    volumes: ["storage:/data/storage"]
+    depends_on:
+      postgres: { condition: service_healthy }
+      storage-init: { condition: service_completed_successfully }
+volumes:
+  postgres_data: {}
